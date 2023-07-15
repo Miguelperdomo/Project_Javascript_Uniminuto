@@ -136,12 +136,12 @@ const BodyComponent = () => {
       const IdPrueba = searchParams.get("IdPrueba");
 
       const data: any = await fetch(
-        `/api/Pruebas/GetPruebasUser?SubSede=${SubSede}&IdRol=${IdRol}&IdUser=${IdUser}&IdPrueba=${
-          IdPrueba || ""
-        }`
-      ).then((res) => res.json());
-      setPruebas(data?.pruebas || []);
+        `/api/Pruebas/GetPruebasUser?IdUser=${IdUser}`
+      ).then((res) => res.json())
+     
+      setPruebas(data?.pruebas);
       setIsPending(false);
+      console.log(data);
     } catch (error) {
       console.log(error);
       alert("Error al cargar los datos");

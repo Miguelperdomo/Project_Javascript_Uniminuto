@@ -4,15 +4,11 @@ import connectionPool from "../../../../config/db";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const SubSede = searchParams.get("SubSede") || "";
   const IdUser = searchParams.get("IdUser") || "";
-  const IdPrueba = searchParams.get("IdPrueba") || "";
 
   try {
     const [PruebasResult]: any = await connectionPool.query(
-      `SELECT parametros_pruebas.subSedeId as CoaId, parametros_pruebas.tipo as TipoPrueba, parametros_pruebas.semestre  as Semestre,pfc_programa.pro_id as IdPrograma, pfc_programa.pro_nom as NombrePrograma, parametros_pruebas.DateDocentesInicio , parametros_pruebas.DateDocentesFin, pfc_ejes.eje_id as IdCompetencia, pfc_ejes.eje_nom as CompetenciaNombre,parametros_pruebas.id as PruebasId FROM parametros_pruebas INNER JOIN asignacionPrueba ON (parametros_pruebas.id=asignacionPrueba.prueba) INNER JOIN pfc_ejes ON(pfc_ejes.eje_id=asignacionPrueba.competencia) INNER JOIN pfc_programa ON (pfc_programa.pro_id=parametros_pruebas.programa) WHERE parametros_pruebas.subSedeId='${SubSede}' and asignacionPrueba.docente='${IdUser}' ${
-        IdPrueba && `AND parametros_pruebas.id='${IdPrueba}'`
-      }`
+      `SELECT parametros_pruebas.subSedeId as CoaId, parametros_pruebas.tipo as TipoPrueba, parametros_pruebas.semestre  as Semestre, pfc_programa.pro_id as IdPrograma, pfc_programa.pro_nom as NombrePrograma, parametros_pruebas.DateDocentesInicio, parametros_pruebas.DateDocentesFin, pfc_ejes.eje_id as IdCompetencia, pfc_ejes.eje_nom as CompetenciaNombre, parametros_pruebas.id as PruebasId FROM parametros_pruebas INNER JOIN asignacionPrueba ON (parametros_pruebas.id=asignacionPrueba.prueba) INNER JOIN pfc_ejes ON (pfc_ejes.eje_id=asignacionPrueba.competencia) INNER JOIN pfc_programa ON (pfc_programa.pro_id=parametros_pruebas.programa) WHERE asignacionPrueba.docente='${IdUser}'`
     );
 
     let newDataFormated = PruebasResult?.reduce((acc: any, prueba: any) => {
@@ -38,7 +34,7 @@ export async function GET(req: NextRequest) {
           PruebasId,
         } = prueba;
 
-        // convert DateDocentesInicios a milisigundos para comparar
+        // convert DateDocentesInicios a milisegundos para comparar
         const DateDocentesInicioMilisegundos = new Date(
           DateDocentesInicio
         ).getTime();
@@ -71,13 +67,13 @@ export async function GET(req: NextRequest) {
     );
 
     return NextResponse.json(
-      { pruebas: Pruebas || [] },
+      { pruebas: Pruebas  },
       {
         status: 200,
       }
     );
   } catch (error) {
-    console.log(error);
+    console.log("No hay pruebas");
 
     return NextResponse.json(
       { body: "Internal Server Error" },

@@ -41,13 +41,13 @@ export function Pregunta2({ data }: Props) {
                                 {explode[0] == "I" ? (
                                     <>
 
-                                        <Image
-                                            src={`${explode[1]}`}
-                                            alt={`${key}`}
-                                            width={400}
-                                            height={400}
-                                            className="bg-cover"
-                                        />
+<img
+                        src={`../../../../public/${explode[1]}`} // Asegúrate de que la ruta sea correcta
+                        alt={`${key}`}
+                        width={400}
+                        height={400}
+                        className="bg-cover"
+                      />
                                     </>
                                 ) : (
                                     <>

@@ -66,8 +66,8 @@ export function Pregunta1({ data}: Props) {
                   </span>
                   {explode[0] == "I" ? (
                     <>
-                      <Image
-                        src={`${explode[1]}`}
+                       <img
+                         src={`../../../../public/${explode[1]}`}  // Asegúrate de que la ruta sea correcta
                         alt={`${key}`}
                         width={400}
                         height={400}
