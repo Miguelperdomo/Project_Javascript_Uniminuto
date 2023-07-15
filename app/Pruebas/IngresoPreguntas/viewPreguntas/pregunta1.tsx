@@ -1,13 +1,15 @@
 import Image from "next/image";
-import React from "react";
+import { useEffect } from "react";
+
 export type Props = {
   data: any;
+  
 };
-export function Pregunta1({ data }: Props) {
+export function Pregunta1({ data}: Props) {
   console.log(data);
-
+ 
   function createMarkup(pregunta: any) {
-    return { __html: `${pregunta}` };
+    return { __html: pregunta };
   }
   const abecedario = "a,b,c,d,e,f,g,h,i,j,k,l,m,o,p,q,r,s,t,u,v".split(",");
   const respuestas = data?.opciones
@@ -40,13 +42,14 @@ export function Pregunta1({ data }: Props) {
       <div
         className="p-4"
         dangerouslySetInnerHTML={createMarkup(data?.Pregunta)}
+        style={{color:"black"}}
       ></div>
-      <div className="my-2">
+      <div className="my-2" >
         <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
           Respuestas:
         </h1>
       </div>
-      <div className="grid md:grid-cols-2 items-center gap-2">
+      <div className="grid md:grid-cols-2 items-center gap-2"  style={{color:"black"}}>
         {respuestas &&
           respuestas.map((info: any, key: number) => {
             const explode = info.split("~");
@@ -87,7 +90,7 @@ export function Pregunta1({ data }: Props) {
           Retroalimentaciones:
         </h1>
       </div>
-      <div className="grid md:grid-cols-2 items-center gap-2">
+      <div className="grid md:grid-cols-2 items-center gap-2"  style={{color:"black"}}>
         {data?.retro.map((ret: any, key: number) => {
           return (
             <>
@@ -103,4 +106,5 @@ export function Pregunta1({ data }: Props) {
       </div>
     </>
   );
+  
 }

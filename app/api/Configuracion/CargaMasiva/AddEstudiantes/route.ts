@@ -93,7 +93,8 @@ export async function POST(req: NextRequest) {
         sem?.Numero?.normalize("NFD")
           ?.replace(/[\u0300-\u036f]/g, "")
           ?.includes(
-            Semestre?.normalize("NFD")?.replace(/[\u0300-\u036f]/g, "")
+            Semestre?.toString()?.normalize("NFD")?.replace(/[\u0300-\u036f]/g, "")
+
           )
       );
 
@@ -126,7 +127,8 @@ export async function POST(req: NextRequest) {
           grupo?.Sigla?.normalize("NFD")
             ?.replace(/[\u0300-\u036f]/g, "")
             ?.includes(
-              Semestre?.normalize("NFD")?.replace(/[\u0300-\u036f]/g, "")
+              Semestre?.toString()?.normalize("NFD")?.replace(/[\u0300-\u036f]/g, "")
+
             ) &&
           grupo?.Nombre?.toLowerCase()
             ?.normalize("NFD")

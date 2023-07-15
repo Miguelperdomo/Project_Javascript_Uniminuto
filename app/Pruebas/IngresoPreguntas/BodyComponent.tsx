@@ -33,10 +33,11 @@ type addPregunta = {
   competencia: string;
   IdClick: number;
   DemasInfo: {};
+  preguntas:[]
 };
 const BodyComponent = () => {
   const searchParams = useSearchParams();
-
+  const [preguntas, setPreguntas] = useState([] as any[]);
   const [Pruebas, setPruebas] = useState([] as []);
   const [Data, setData] = React.useState({
     Programas: null,
@@ -59,16 +60,20 @@ const BodyComponent = () => {
     PruebasId?: number;
     IdUser?: string;
     IdRol?: string;
+    
   });
   const [actualizador, setActualiza] = useState({} as Revisiones);
   const [Competencias, setCompetencias] = React.useState({} as Competencias);
   const [dataEnvia, setDataEnvia] = useState({} as addPregunta);
+  const [totalPreguntas, setTotalPreguntas] = useState(0);
   const [ShowModal, setShowModal] = React.useState({
     AddVisible: false,
     EditVisible: false,
   } as VisibilidadModal);
   const [isPending, setIsPending] = useState(false as boolean);
-
+  const agregarPregunta = (pregunta: any) => {
+    setPreguntas((prevPreguntas) => [...prevPreguntas, pregunta]);
+  };
   const fetchData = async () => {
     const result = await axios.post(
       `/api/Pruebas/GetSemestrePrograma?SubSede=${Values.IdSubSede}`,
@@ -78,7 +83,10 @@ const BodyComponent = () => {
     );
     setData({ ...Data, semestres: result.data?.semestres });
   };
-
+  
+  const handleTotalPreguntas = (total: number) => {
+    setTotalPreguntas(total);
+  };
   const fetchPrueba = async () => {
     const result = await axios.post(
       `/api/Pruebas/GetPruebas?SubSede=${Values.IdSubSede}`,
@@ -101,16 +109,21 @@ const BodyComponent = () => {
   };
   const fetchCompetencias = async () => {
     const result = await axios.post("/api/Pruebas/GetCompetencias", {
-      Values,
+      Values: {
+        ...Values,
+        preguntas: preguntas, 
+      },
+    
     });
-
+  
     console.log("result?.data?.competencias", result?.data?.competencias);
-
+  
     setCompetencias(result?.data?.competencias);
   };
   useEffect(() => {
     if (Values.PruebasId) {
       fetchCompetencias();
+      
     }
   }, [Values?.PruebasId, actualizador?.Contador]);
 
@@ -149,22 +162,29 @@ const BodyComponent = () => {
     getData();
   }, []);
   return (
+
     <>
+    
       {ShowModal?.EditVisible && (
         <Preguntas
           competencia={dataEnvia?.competencia}
           prueba={dataEnvia?.id}
           setShowModal={setShowModal}
+          onTotalPreguntas={handleTotalPreguntas}
         />
       )}
       {ShowModal?.AddVisible && (
         <ModalAdd
+        agregarPregunta={agregarPregunta}
           setContador={setActualiza}
           setShowModal={setShowModal}
           data={dataEnvia}
+         preguntas={preguntas}
           Prueba={Values?.PruebasId}
           Semestre={Values.Semestre}
           DemasInfo={dataEnvia?.DemasInfo}
+          
+       
         />
       )}
       <Title title="Ingreso de Preguntas" />
@@ -223,6 +243,9 @@ const BodyComponent = () => {
                 {Competencias && Object.keys(Competencias)?.length ? (
                   <>
                     {Competencias?.G?.map((item: any) => {
+                      console.log("itemsPregunta", totalPreguntas);
+                      
+                      
                       return (
                         <div
                           key={item?.Id}
@@ -232,8 +255,9 @@ const BodyComponent = () => {
                             <h2 className="flex  text-base md:text-2xl  px-2  text-white">
                               {item?.Nombre}
                             </h2>
+                            
                             <h2 className="text-base md:text-2xl  px-4 py-2 lg:px-8 text-white ">
-                              {item?.cantidad} Preguntas Ingresadas
+                            {totalPreguntas} Preguntas Ingresadas
                             </h2>
                             <div className="flex justify-center items-center">
                               <svg
@@ -245,6 +269,9 @@ const BodyComponent = () => {
                                     competencia: item?.Nombre,
                                     id: item?.Id,
                                     DemasInfo: item,
+                                   preguntas: item?.preguntas
+                                    
+                                    
                                   });
                                   setShowModal({
                                     AddVisible: true,
@@ -330,7 +357,7 @@ const BodyComponent = () => {
                               {item?.Nombre}
                             </h2>
                             <h2 className="text-base md:text-2xl  px-4 py-2 lg:px-8 text-white ">
-                              {item?.cantidad} Preguntas Ingresadas
+                              {preguntas.length} Preguntas Ingresadas
                             </h2>
                             <div className="flex justify-center items-center">
                               <svg

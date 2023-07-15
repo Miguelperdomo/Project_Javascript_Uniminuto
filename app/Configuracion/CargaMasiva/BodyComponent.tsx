@@ -12,10 +12,15 @@ import { useSearchParams } from "next/navigation";
 
 const BodyComponent = () => {
   const [data, setData] = React.useState([] as Estudiante[]);
-  const [Estudiantes, setEstudiantes] = React.useState([] as Estudiante[]);
+  
 
   const [NameFile, setNameFile] = React.useState("");
   const [Cargando, setCargando] = React.useState(false);
+  const [fileName, setFileName] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [errorData, setErrorData] = React.useState([]);
+  
+  const [Estudiantes, setEstudiantes] = React.useState([] as any[]);
 
   const [DatosIncorrectos, setDatosIncorrectos] = React.useState([] as any);
 
@@ -25,28 +30,51 @@ const BodyComponent = () => {
   const searchParams = useSearchParams();
   const [isPending, setIsPending] = React.useState(false as boolean);
 
-  const handleFile = (e: any) => {
-    try {
-      const file = e?.target?.files[0];
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0];
+  
+    if (file) {
       const reader = new FileReader();
-
+  
       reader.onload = (e) => {
         const data = e?.target?.result;
         const workbook = XLSX.read(data, { type: "binary" });
-        const first_sheet_name = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[first_sheet_name];
-        const estudiantes = XLSX.utils.sheet_to_json(worksheet, { raw: true });
-
-        setEstudiantes(estudiantes as []);
-        console.log(estudiantes);
-
-        alert(`${file.name} Puede ser subido`);
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const estudiantesData = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+  
+        if (Array.isArray(estudiantesData)) {
+          setEstudiantes(estudiantesData);
+          setFileName(file.name);
+          setErrorData([]);
+        } else {
+          console.error("El archivo no contiene datos válidos de estudiantes.");
+        }
       };
+  
       reader.readAsBinaryString(file);
-      setNameFile(file.name);
+    }
+  };
+  
+  
+
+  const handleUpload = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post( `/api/Configuracion/CargaMasiva/AddEstudiantes`,{Estudiantes});
+      
+      if (response.data.success) {
+        alert("Estudiantes agregados correctamente");
+      } else {
+        setErrorData(response.data.errorData || []);
+        alert(response.data.message || "Error al subir estudiantes");
+      }
+      
+      setLoading(false);
     } catch (error) {
       console.error(error);
-      setEstudiantes([]);
+      setLoading(false);
+      alert("Error al subir estudiantes");
     }
   };
 
@@ -74,6 +102,34 @@ const BodyComponent = () => {
       {data?.length > 0 ? (
         <>
           <Title title="Carga Masiva Estudiantes" />
+          <div>
+      <input
+        type="file"
+        accept=".csv"
+        onChange={(e) => handleFileUpload(e)} 
+      />
+      {fileName && <p>Archivo seleccionado: {fileName}</p>}
+
+      <button
+        onClick={handleUpload}
+        disabled={Estudiantes.length === 0 || loading}
+      >
+        Subir Estudiantes
+      </button>
+
+      {loading && <p>Subiendo estudiantes...</p>}
+
+      {errorData.length > 0 && (
+        <div>
+          <h2>Estudiantes con datos incorrectos:</h2>
+          <ul>
+            {errorData.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
 
           <TableStudiantes info={data} />
         </>
@@ -207,7 +263,7 @@ const BodyComponent = () => {
                                   id="dropzone"
                                   hidden
                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                  onChange={handleFile}
+                                  onChange={handleFileUpload}
                                 />
                                 <div className="bg-blue-900 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-blue-500">
                                   {NameFile
