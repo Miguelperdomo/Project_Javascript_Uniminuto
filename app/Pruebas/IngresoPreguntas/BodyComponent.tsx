@@ -215,7 +215,7 @@ const BodyComponent = () => {
                   </label>
                   <Select
                     className="dark:text-black"
-                    isDisabled={!Pruebas?.length}
+                   
                     options={Pruebas}
                     placeholder="Seleccione una opción"
                     getOptionLabel={(item) =>
