@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       retro,
       IdRol,
       IdUser,
+      imagen,
     } = await req?.json();
 
     let respuestasFormated = "";
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       e.eje_nom.toLowerCase().includes(`${competencia.toLowerCase()}`)
     );
     const [ingreso]: any = await connectionPool.query(
-      `INSERT INTO preguntas_pruebas(tipo,pregunta,opciones,respuesta,punto,competencia,prueba,aprobo,IdDocente) VALUES(1, '${pregunta}', '${respuestasFormated}','${correcta}', ${punto},  '${competenciaFind[0]?.eje_id}', '${prueba}', 0,'${IdUser}')`
+      `INSERT INTO preguntas_pruebas(tipo,pregunta,opciones,respuesta,punto,competencia,prueba,aprobo,IdDocente,imagen) VALUES(1, '${pregunta}', '${respuestasFormated}','${correcta}', ${punto},  '${competenciaFind[0]?.eje_id}', '${prueba}', 0,'${IdUser}', '${imagen}')`
     );
     if (retro?.length > 0) {
       const id = ingreso?.insertId;

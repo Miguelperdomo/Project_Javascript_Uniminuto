@@ -15,7 +15,6 @@ type props = {
   Semestre: any;
   Editor: any;
   agregarPregunta: (pregunta: any) => void;
-  
 };
 function Tipo1({
   competencia,
@@ -166,6 +165,7 @@ function Tipo1({
         prueba: Prueba,
         semestre: Semestre,
         retro: retro,
+        imagen: values.imagen,
         IdRol: searchParams?.get("IdRol") || 0,
         IdUser: searchParams?.get("IdUser") || 0,
       })
@@ -206,22 +206,22 @@ function Tipo1({
       >
         <div className="text-center p-4">
           <div className="relative flex h-10 w-full justify-center overflow-clip rounded-lg">
-          <input
-  className="peer w-1/4 rounded-l-lg border border-slate-400 px-2 text-slate-900 placeholder-slate-400 transition-colors duration-300 focus:border-[#151A8B] focus:outline-none"
-  type="text"
-  required
-  disabled={!puntos} // Cambia `true` por `!puntos`
-  min={0}
-  max={puntos || 0}
-  name="puntos"
-  value={values.puntos} // Agrega esta línea
-  onChange={(e: any) => {
-    handleChange(e);
-  }}
-  autoComplete="off"
-  title="Solo se permiten intervalos de 10 puntos, hasta un máximo de 300 puntos"
-  placeholder="Puntos"
-/>
+            <input
+              className="peer w-1/4 rounded-l-lg border border-slate-400 px-2 text-slate-900 placeholder-slate-400 transition-colors duration-300 focus:border-[#151A8B] focus:outline-none"
+              type="text"
+              required
+              disabled={!puntos} // Cambia `true` por `!puntos`
+              min={0}
+              max={puntos || 0}
+              name="puntos"
+              value={values.puntos} // Agrega esta línea
+              onChange={(e: any) => {
+                handleChange(e);
+              }}
+              autoComplete="off"
+              title="Solo se permiten intervalos de 10 puntos, hasta un máximo de 300 puntos"
+              placeholder="Puntos"
+            />
             <label
               className="flex items-center rounded-r-lg border border-slate-400 bg-slate-50 px-2 text-sm text-slate-400 transition-colors duration-300 peer-focus:border-[#151A8B] peer-focus:bg-[#151A8B] peer-focus:text-white"
               htmlFor="domain"

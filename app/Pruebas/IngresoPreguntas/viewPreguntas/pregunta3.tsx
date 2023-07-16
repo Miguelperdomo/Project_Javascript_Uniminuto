@@ -65,6 +65,7 @@ export function Pregunta3({ data }: Props) {
                   {respuestas &&
                     respuestas.map((info: any, key: number) => {
                       const explode = info.split("~");
+
                       return (
                         <>
                           <div
@@ -76,19 +77,18 @@ export function Pregunta3({ data }: Props) {
                             <span className="font-bold text-xl">
                               {abecedario[key].toUpperCase()}){" "}
                             </span>
-                            {explode[0] == "I" ? (
-                              <>
+                            {explode[0] === "I" ? (
                               <img
-                        src={`../../../../public/${explode[1]}`} // Asegúrate de que la ruta sea correcta
-                        alt={`${key}`}
-                        width={400}
-                        height={400}
-                        className="bg-cover"
-                      />
-                              </>
+                                src={`/${explode[1]}`} // Ruta relativa a la carpeta "public"
+                                alt={`${key}`}
+                                width={400}
+                                height={400}
+                                className="bg-cover"
+                              />
                             ) : (
                               <>{explode[1]?.length > 0 && <>{explode[1]}</>}</>
                             )}
+
                             <span className="text-2xl">
                               {preg.respuesta == abecedario[key] && (
                                 <>&#10004;</>

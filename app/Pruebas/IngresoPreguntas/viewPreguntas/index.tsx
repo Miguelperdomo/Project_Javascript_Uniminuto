@@ -12,7 +12,12 @@ export type Props = {
   setShowModal: React.Dispatch<React.SetStateAction<VisibilidadModal>>;
   onTotalPreguntas: (total: number) => void;
 };
-export function Preguntas({ competencia, prueba, setShowModal, onTotalPreguntas}: Props,) {
+export function Preguntas({
+  competencia,
+  prueba,
+  setShowModal,
+  onTotalPreguntas,
+}: Props) {
   const [data, setData] = useState([] as any);
   const [ShowQuestion, setShowQuestion] = useState({} as any);
 
@@ -40,11 +45,9 @@ export function Preguntas({ competencia, prueba, setShowModal, onTotalPreguntas}
   //  useEffect(() => {
   //   console.log("Total de preguntas:", data.length);
 
-  // }, [data]);  
+  // }, [data]);
   // }
-   
-  
-  
+
   return (
     <>
       <div className="bg-[#000236]/100 overflow-auto  transition duration-150 ease-in-out z-10 fixed top-0 right-0 bottom-0 left-0">
@@ -56,8 +59,6 @@ export function Preguntas({ competencia, prueba, setShowModal, onTotalPreguntas}
             </h1>
             <div className="flex gap-2 flex-wrap justify-around">
               {data?.map((preg: any, key: number) => {
-              
-                
                 return (
                   <>
                     <button
