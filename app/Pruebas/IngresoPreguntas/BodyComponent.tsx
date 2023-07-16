@@ -33,7 +33,7 @@ type addPregunta = {
   competencia: string;
   IdClick: number;
   DemasInfo: {};
-  preguntas:[]
+  preguntas: [];
 };
 const BodyComponent = () => {
   const searchParams = useSearchParams();
@@ -60,7 +60,6 @@ const BodyComponent = () => {
     PruebasId?: number;
     IdUser?: string;
     IdRol?: string;
-    
   });
   const [actualizador, setActualiza] = useState({} as Revisiones);
   const [Competencias, setCompetencias] = React.useState({} as Competencias);
@@ -83,7 +82,7 @@ const BodyComponent = () => {
     );
     setData({ ...Data, semestres: result.data?.semestres });
   };
-  
+
   const handleTotalPreguntas = (total: number) => {
     setTotalPreguntas(total);
   };
@@ -111,19 +110,17 @@ const BodyComponent = () => {
     const result = await axios.post("/api/Pruebas/GetCompetencias", {
       Values: {
         ...Values,
-        preguntas: preguntas, 
+        preguntas: preguntas,
       },
-    
     });
-  
+
     console.log("result?.data?.competencias", result?.data?.competencias);
-  
+
     setCompetencias(result?.data?.competencias);
   };
   useEffect(() => {
     if (Values.PruebasId) {
       fetchCompetencias();
-      
     }
   }, [Values?.PruebasId, actualizador?.Contador]);
 
@@ -137,8 +134,8 @@ const BodyComponent = () => {
 
       const data: any = await fetch(
         `/api/Pruebas/GetPruebasUser?IdUser=${IdUser}`
-      ).then((res) => res.json())
-     
+      ).then((res) => res.json());
+
       setPruebas(data?.pruebas);
       setIsPending(false);
       console.log(data);
@@ -162,9 +159,7 @@ const BodyComponent = () => {
     getData();
   }, []);
   return (
-
     <>
-    
       {ShowModal?.EditVisible && (
         <Preguntas
           competencia={dataEnvia?.competencia}
@@ -175,16 +170,14 @@ const BodyComponent = () => {
       )}
       {ShowModal?.AddVisible && (
         <ModalAdd
-        agregarPregunta={agregarPregunta}
+          agregarPregunta={agregarPregunta}
           setContador={setActualiza}
           setShowModal={setShowModal}
           data={dataEnvia}
-         preguntas={preguntas}
+          preguntas={preguntas}
           Prueba={Values?.PruebasId}
           Semestre={Values.Semestre}
           DemasInfo={dataEnvia?.DemasInfo}
-          
-       
         />
       )}
       <Title title="Ingreso de Preguntas" />
@@ -215,7 +208,6 @@ const BodyComponent = () => {
                   </label>
                   <Select
                     className="dark:text-black"
-                   
                     options={Pruebas}
                     placeholder="Seleccione una opción"
                     getOptionLabel={(item) =>
@@ -244,8 +236,7 @@ const BodyComponent = () => {
                   <>
                     {Competencias?.G?.map((item: any) => {
                       console.log("itemsPregunta", totalPreguntas);
-                      
-                      
+
                       return (
                         <div
                           key={item?.Id}
@@ -255,9 +246,9 @@ const BodyComponent = () => {
                             <h2 className="flex  text-base md:text-2xl  px-2  text-white">
                               {item?.Nombre}
                             </h2>
-                            
+
                             <h2 className="text-base md:text-2xl  px-4 py-2 lg:px-8 text-white ">
-                            {totalPreguntas} Preguntas Ingresadas
+                              {item.cantidad} Preguntas Ingresadas
                             </h2>
                             <div className="flex justify-center items-center">
                               <svg
@@ -269,9 +260,7 @@ const BodyComponent = () => {
                                     competencia: item?.Nombre,
                                     id: item?.Id,
                                     DemasInfo: item,
-                                   preguntas: item?.preguntas
-                                    
-                                    
+                                    preguntas: item?.preguntas,
                                   });
                                   setShowModal({
                                     AddVisible: true,
