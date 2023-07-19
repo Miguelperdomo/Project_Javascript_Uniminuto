@@ -309,7 +309,7 @@ const ModalSeeQuestion = ({
                               {alphabet[index]}
                               -
                               <Image
-                                src={`${option?.split("~")[1]}`}
+                                src="/"
                                 alt={`${index}`}
                                 width={400}
                                 height={400}

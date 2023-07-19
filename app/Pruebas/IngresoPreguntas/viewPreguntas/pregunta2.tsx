@@ -17,10 +17,12 @@ export function Pregunta2({ data }: Props) {
     <>
       <div className="grid grid-cols-2 my-2">
         <div>
-          <span className="font-bold">Puntos asignados: </span>
+          <span className="font-bold" style={{ color: "black" }}>
+            Puntos asignados:{" "}
+          </span>
           {data?.punto}
         </div>
-        <div>
+        <div style={{ color: "black" }}>
           <span className="font-bold">Estado de la pregunta: </span>
           {(data?.aprobo == 0 && "Pendiente por autorización") ||
             (data?.aprobo == 1 && "Rechazada") ||
@@ -34,6 +36,7 @@ export function Pregunta2({ data }: Props) {
       </div>
       <div
         className="p-4"
+        style={{ color: "black" }}
         dangerouslySetInnerHTML={createMarkup(data?.Pregunta)}
       ></div>
       <div className="my-2">
@@ -41,7 +44,10 @@ export function Pregunta2({ data }: Props) {
           Respuestas:
         </h1>
       </div>
-      <div className="grid md:grid-cols-2 items-center gap-2">
+      <div
+        className="grid md:grid-cols-2 items-center gap-2"
+        style={{ color: "black" }}
+      >
         {respuestas &&
           respuestas.map((info: any, key: number) => {
             const explode = info.split("~");
@@ -83,7 +89,10 @@ export function Pregunta2({ data }: Props) {
           Retroalimentaciones:
         </h1>
       </div>
-      <div className="grid md:grid-cols-2 items-center gap-2">
+      <div
+        className="grid md:grid-cols-2 items-center gap-2"
+        style={{ color: "black" }}
+      >
         {data?.retro.map((ret: any, key: number) => {
           return (
             <>

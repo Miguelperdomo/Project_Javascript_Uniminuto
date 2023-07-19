@@ -47,6 +47,7 @@ export function Preguntas({
 
   // }, [data]);
   // }
+  console.log("preguntas", ShowQuestion);
 
   return (
     <>
@@ -59,8 +60,9 @@ export function Preguntas({
             </h1>
             <div className="flex gap-2 flex-wrap justify-around">
               {data?.map((preg: any, key: number) => {
-                return (
-                  <>
+                // Verificar si las opciones son diferentes de null
+                if (preg.opciones !== null) {
+                  return (
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -83,8 +85,8 @@ export function Preguntas({
                     >
                       Pregunta {key + 1}
                     </button>
-                  </>
-                );
+                  );
+                }
               })}
             </div>
             {ShowQuestion?.TipoPregunta == 1 && (

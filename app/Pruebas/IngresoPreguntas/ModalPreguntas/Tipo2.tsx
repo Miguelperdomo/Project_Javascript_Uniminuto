@@ -23,7 +23,7 @@ function Tipo2({
   Editor,
 }: props) {
   const [values, setValues] = useState({} as any);
-  const [puntos, setPuntos] = useState(null);
+  const [puntos, setPuntos] = useState(0);
   const [pregunta, setPregunta] = useState(null as any);
 
   const searchParams: any = useSearchParams();
@@ -123,6 +123,10 @@ function Tipo2({
   };
   const handleChange = (e: any) => {
     const { value, name } = e.target;
+    if (name === "puntos") {
+      // Actualizar el estado 'puntos'
+      setPuntos(Number(value));
+    }
     setValues({
       ...values,
       [name]: value,
@@ -150,16 +154,16 @@ function Tipo2({
     ) {
       alert(
         "Existen opciones de respuestas que son obligatorias que no se han ingresado, tenga en cuenta que la pregunta debe tener " +
-        obligatorias +
-        " opciones de respuesta"
+          obligatorias +
+          " opciones de respuesta"
       );
       return false;
     }
     if (respuestas.length != obligatorias || respuestas.indexOf("") > 0) {
       alert(
         "Existen respuestas que son obligatorias que no se han ingresado, tenga en cuenta que la pregunta debe tener " +
-        obligatorias +
-        " opciones de respuesta"
+          obligatorias +
+          " opciones de respuesta"
       );
       return false;
     }
@@ -177,7 +181,7 @@ function Tipo2({
     }
     axios
       .post("/api/Pruebas/Save/SavePregunta2", {
-        pregunta: contenido.replace(/'/g, "\""),
+        pregunta: contenido.replace(/'/g, '"'),
         correcta: values.correcta,
         respuestas: selectRespuestas,
         textos: respuestas,
@@ -230,9 +234,8 @@ function Tipo2({
               className="peer w-1/4 rounded-l-lg border border-slate-400 px-2 text-slate-900 placeholder-slate-400 transition-colors duration-300 focus:border-[#151A8B] focus:outline-none"
               type="number"
               required
-              disabled={puntos ? false : true}
               min={0}
-              max={puntos || 0}
+              max={puntos}
               name="puntos"
               onChange={(e: any) => {
                 handleChange(e);

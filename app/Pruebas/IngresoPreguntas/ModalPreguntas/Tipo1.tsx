@@ -210,7 +210,6 @@ function Tipo1({
               className="peer w-1/4 rounded-l-lg border border-slate-400 px-2 text-slate-900 placeholder-slate-400 transition-colors duration-300 focus:border-[#151A8B] focus:outline-none"
               type="text"
               required
-              disabled={!puntos} // Cambia `true` por `!puntos`
               min={0}
               max={puntos || 0}
               name="puntos"

@@ -1,11 +1,13 @@
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import React from "react";
-import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
+import React, { useRef } from "react";
+import dynamic from "next/dynamic";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
+import "froala-editor/js/plugins.pkgd.min.js";
+
 import axios from "axios";
 import ModalRechazo from "./ModalRechazo";
+
 type Props = {
   setShowAllQuestions: any;
   ShowAllQuestions: {
@@ -15,11 +17,11 @@ type Props = {
   };
   getData: Function;
 };
+
 const FroalaEditor: any = dynamic(
   async () => {
     const values = await Promise.all([
       import("react-froala-wysiwyg"), // must be first import since we are doing values[0] in return
-      import("froala-editor/js/plugins.pkgd.min.js"),
     ]);
     return values[0];
   },
@@ -31,6 +33,7 @@ const FroalaEditor: any = dynamic(
 //@ts-ignore
 window.FroalaEditor = require("froala-editor");
 require("@wiris/mathtype-froala3");
+//@ts-ignore
 
 const NewModalEditQuestion = ({
   setShowAllQuestions,
@@ -42,7 +45,8 @@ const NewModalEditQuestion = ({
   );
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
+  const initialContent = "<p>Escribe tu contenido aquí</p>";
+  const [content, setContent] = React.useState(initialContent);
   const [EditQuestion, setEditQuestion] = React.useState<any>({
     Show: false,
     Questions: {},
@@ -61,13 +65,14 @@ const NewModalEditQuestion = ({
   }
 
   const [EditResponse, setEditResponse] = React.useState(false);
+  const [editorContent, setEditorContent] = React.useState<string>(Pregunta);
 
   const handlerAceptar = async () => {
     try {
       const response = await axios.post(
         "/api/Pruebas/AprobarPreguntas/AceptarPruebas",
         {
-          Pregunta: Pregunta,
+          Pregunta: editorContent,
           idPregunta: ShowAllQuestions?.Questions?.id,
           OptionsQuestion: OptionsQuestion,
           TipoPreguntas: ShowAllQuestions?.Questions?.TipoPreguntas,
@@ -90,7 +95,26 @@ const NewModalEditQuestion = ({
       alert(error?.response?.data?.body);
     }
   };
-
+  const handleEditorChange = (newContent: string) => {
+    setEditorContent(newContent);
+  };
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const inputValue = e.target.value || "\u200B"; // Agregamos el valor predeterminado si el contenido está vacío
+    const newOptions = OptionsQuestion.map(
+      (option: string, optionIndex: number) => {
+        if (optionIndex === index) {
+          return `@T~${inputValue}`;
+        } else {
+          return option;
+        }
+      }
+    );
+    console.log(newOptions); // Agregar este log para verificar los cambios
+    setOptionsQuestion(newOptions);
+  };
   return (
     <>
       {ModalRechazoQuestion.Show && (
@@ -106,7 +130,10 @@ const NewModalEditQuestion = ({
           />
         </>
       )}
-      <div className="bg-[#000236]/70 transition duration-150 ease-in-out z-20 fixed top-0 right-0 bottom-0 left-0">
+      <div
+        className="bg-[#000236]/70 transition duration-150 ease-in-out z-20 fixed top-0 right-0 bottom-0 left-0"
+        style={{ color: "black" }}
+      >
         <div className="container mx-auto  w-11/12 md:w-2/3 max-w-5xl">
           <div className="relative overflow-auto  max-h-screen  py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
             <div className="flex justify-between items-center text-center text-lg tracking-normal leading-tight mb-4 bg-[#151A8B] w-full text-white p-4 rounded-lg font-bold">
@@ -146,85 +173,22 @@ const NewModalEditQuestion = ({
                 <div className="flex justify-center">
                   {EditQuestion?.Show ? (
                     <>
-                      <FroalaEditor
-                        model={Pregunta}
-                        onModelChange={(e: any) => {
-                          setPregunta(e);
-                        }}
-                        config={{
-                          toolbarButtons: {
-                            moreText: {
-                              buttons: [
-                                "bold",
-                                "italic",
-                                "underline",
-                                "strikeThrough",
-                                "subscript",
-                                "superscript",
-                                "fontFamily",
-                                "fontSize",
-                                "textColor",
-                                "backgroundColor",
-                                "inlineClass",
-                                "inlineStyle",
-                                "clearFormatting",
-                              ],
-                            },
-                            moreParagraph: {
-                              buttons: [
-                                "alignLeft",
-                                "alignCenter",
-                                "formatOLSimple",
-                                "alignRight",
-                                "alignJustify",
-                                "formatOL",
-                                "formatUL",
-                                "paragraphFormat",
-                                "paragraphStyle",
-                                "lineHeight",
-                                "outdent",
-                                "indent",
-                                "quote",
-                              ],
-                            },
-                            moreRich: {
-                              buttons: [
-                                "insertImage",
-                                "insertVideo",
-                                "insertTable",
-                                "emoticons",
-                                "fontAwesome",
-                                "specialCharacters",
-                                "embedly",
-                                "insertHR",
-                              ],
-                            },
-                            moreMisc: {
-                              buttons: [
-                                "undo",
-                                "redo",
-                                "spellChecker",
-                                "selectAll",
-                                "wirisEditor",
-                                "wirisChemistry",
-                              ],
-                              align: "right",
-                              buttonsVisible: 2,
-                            },
-                          },
-                          // Allow all tags, in order to allow MathML:
-                          htmlAllowedTags: [".*"],
-                          htmlAllowedAttrs: [".*"],
-                          // Allow empty tags on these next elements for proper formula rendering:
-                          htmlAllowedEmptyTags: ["mprescripts", "none"],
-                          language: "es",
-                          attribution: false,
-                        }}
-                      />
+                      <div>
+                        <FroalaEditor
+                          model={editorContent} // Usamos el estado editorContent para el modelo
+                          onModelChange={handleEditorChange}
+                          config={
+                            {
+                              // Configura las opciones del editor según tus necesidades
+                            }
+                          }
+                        />
+                      </div>
                     </>
                   ) : (
                     <>
-                      <FroalaEditorView model={Pregunta} />
+                      {/* Aquí mostrarás el contenido estático */}
+                      <div dangerouslySetInnerHTML={createMarkup(Pregunta)} />
                     </>
                   )}
                   <span>
@@ -265,7 +229,7 @@ const NewModalEditQuestion = ({
                         stroke="currentColor"
                         className="w-6 h-6 cursor-pointer"
                         onClick={() => {
-                          setEditResponse(!EditResponse);
+                          setEditResponse(true);
                         }}
                       >
                         <path
@@ -294,7 +258,7 @@ const NewModalEditQuestion = ({
                             {alphabet[index]}
                             -
                             <Image
-                              src={`${option?.split("~")[1]}`}
+                              src="/"
                               alt={`${index}`}
                               width={400}
                               height={400}
@@ -311,24 +275,21 @@ const NewModalEditQuestion = ({
                                 {EditResponse ? (
                                   <>
                                     <input
-                                      className="InputStyle"
                                       type="text"
-                                      onChange={(e) => {
-                                        const newOptions = OptionsQuestion?.map(
-                                          (
-                                            option: any,
-                                            indexOption: number
-                                          ) => {
-                                            if (indexOption == index) {
-                                              return `@T~${e.target.value}`;
-                                            } else {
-                                              return option;
-                                            }
-                                          }
-                                        );
-                                        setOptionsQuestion(newOptions);
+                                      style={{
+                                        // Aquí defines los estilos directamente usando un objeto de estilo
+                                        width: "100%",
+                                        padding: "8px",
+                                        color: "#333",
+                                        border: "1px solid #ccc",
+                                        borderRadius: "4px",
+                                        // Agrega aquí los demás estilos que necesites
                                       }}
+                                      onChange={(e) =>
+                                        handleInputChange(e, index)
+                                      }
                                       value={option?.split("~")[1]}
+                                      // Asegurarse de que el valor no sea nulo o indefinido
                                     />
                                   </>
                                 ) : (

@@ -25,7 +25,7 @@ function Tipo3({
 }: props) {
   // DEFINICIÓN DE VARIABLES
   const [values, setValues] = useState([{}] as any);
-  const [puntos, setPuntos] = useState(null);
+  const [puntos, setPuntos] = useState(0);
   const [cantidadPreguntas, setCantidad] = useState([] as any);
   const [texto, setTexto] = useState("" as any);
   const letras = [] as any;
@@ -146,6 +146,23 @@ function Tipo3({
   };
   const handleChange = (e: any, key: number) => {
     const { value, name } = e.target;
+    if (name === "correcta") {
+      // Actualizar el estado 'puntos'
+      setPuntos(Number(value));
+    }
+    const newData = [...values];
+    newData[key] = {
+      [name]: value,
+    };
+
+    setValues(newData);
+  };
+  const handleChang = (e: any, key: number) => {
+    const { value, name } = e.target;
+    if (name === "puntos") {
+      // Actualizar el estado 'puntos'
+      setPuntos(Number(value));
+    }
     const newData = [...values];
     newData[key] = {
       ...values[key],
@@ -153,8 +170,8 @@ function Tipo3({
     };
     setValues(newData);
   };
-  useEffect(() => {
-    const dataPreguntas = axios
+  const dataPreguntas = async () => {
+    await axios
       .post("/api/Pruebas/BaseInfoPreguntas", {
         prueba: Prueba,
         semestre: Semestre,
@@ -165,6 +182,9 @@ function Tipo3({
           setPuntos(res.data?.puntos);
         }
       });
+  };
+  useEffect(() => {
+    dataPreguntas();
   }, []);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -186,8 +206,11 @@ function Tipo3({
     }
     setTexto(contenidoTexto);
     let puntTotal = 0;
-    values.forEach(async (element: any, key: number) => {
-      if (!element?.puntos || element?.puntos == 0) {
+    for (let key = 0; key < values.length; key++) {
+      const element = values[key];
+      console.log(element);
+
+      if (element?.puntos === 0) {
         alert("Debe ingresar el puntaje para la pregunta " + (key + 1));
         return false;
       }
@@ -208,32 +231,33 @@ function Tipo3({
           contenido = contenido.replace(res.origen, res.final);
         });
       }
-      element.Pregunta = contenido.replace(/'/g, "\"");
+      element.Pregunta = contenido.replace(/'/g, '"');
       if (element?.Respuestas?.length != obligatorias) {
         alert(
-          `Debe registrar ${obligatorias} respuestas obligatoriamente para la pregunta ${key + 1
+          `Debe registrar ${obligatorias} respuestas obligatoriamente para la pregunta ${
+            key + 1
           }`
         );
         return false;
       }
-      if (!element?.correcta) {
+      if (!`${element?.correcta}-${key}`) {
         alert(
           "Debe ingresar cual pregunta es la correcta para la pregunta" +
-          (key + 1)
+            (key + 1)
         );
         return false;
       }
-    });
+    }
     console.log(puntTotal);
     if (puntTotal > (puntos || 0)) {
       alert(
         `La sumatoria de los puntos ingresados: ${puntTotal}, supera la cantidad de puntos posibles los cuales son: ${puntos}`
       );
     }
-    axios
+    await axios
       .post("/api/Pruebas/Save/SavePregunta3", {
         data: values,
-        text: contenidoTexto.replace(/'/g, "\""),
+        text: contenidoTexto.replace(/'/g, '"'),
         competencia: competencia,
         prueba: Prueba,
         semestre: Semestre,
@@ -375,12 +399,12 @@ function Tipo3({
                       className="peer w-1/4 rounded-l-lg border border-slate-400 px-2 text-slate-900 placeholder-slate-400 transition-colors duration-300 focus:border-[#151A8B] focus:outline-none"
                       type="number"
                       required
-                      disabled={puntos ? false : true}
+                      // disabled={puntos ? false : true}
                       min={0}
                       max={puntos || 0}
                       name="puntos"
                       onChange={(e: any) => {
-                        handleChange(e, key);
+                        handleChang(e, key);
                       }}
                       autoComplete="off"
                     />
@@ -481,8 +505,8 @@ function Tipo3({
                               className="mr-2"
                               required
                               type="radio"
-                              name="correcta"
-                              id="correcta"
+                              name={`correcta-${key}`} // Update the name attribute with a unique key
+                              id={`correcta-${letr.id}`} // Use unique IDs for each radio button
                               value={letr.name}
                               onClick={(e: any) => {
                                 handleChange(e, key);
@@ -582,10 +606,10 @@ function Tipo3({
                 </>
               );
             })) || (
-              <span className="dark:text-black">
-                Debe seleccionar una cantidad de preguntas
-              </span>
-            )}
+            <span className="dark:text-black">
+              Debe seleccionar una cantidad de preguntas
+            </span>
+          )}
 
           <div className="flex justify-around mt-3 gap-2">
             <button

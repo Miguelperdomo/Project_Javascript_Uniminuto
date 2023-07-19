@@ -26,7 +26,10 @@ const NewModalSeeQuestion = ({
   }
 
   return (
-    <div className="bg-[#000236]/70 transition duration-150 ease-in-out z-20 fixed top-0 right-0 bottom-0 left-0">
+    <div
+      className="bg-[#000236]/70 transition duration-150 ease-in-out z-20 fixed top-0 right-0 bottom-0 left-0"
+      style={{ color: "black" }}
+    >
       <div className="container mx-auto  w-11/12 md:w-2/3 max-w-5xl">
         <div className="relative overflow-auto  max-h-screen  py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
           <div className="flex justify-between items-center text-center text-lg tracking-normal leading-tight mb-4 bg-[#151A8B] w-full text-white p-4 rounded-lg font-bold">
@@ -34,8 +37,8 @@ const NewModalSeeQuestion = ({
               Pregunta Completa
             </h1>
           </div>
-          {ShowAllQuestions?.Questions?.MsnRechazo.length > 0 && (
-            <p>
+          {ShowAllQuestions?.Questions?.MsnRechazo && (
+            <p style={{ color: "black" }}>
               <b className="text-[#000236]">Motivo de rechazo: </b>
               {ShowAllQuestions?.Questions?.MsnRechazo}
             </p>
@@ -63,7 +66,7 @@ const NewModalSeeQuestion = ({
                       {alphabet[index]}
                       -
                       <Image
-                        src={`${option?.split("~")[1]}`}
+                        src="/"
                         alt={`${index}`}
                         width={400}
                         height={400}

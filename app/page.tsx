@@ -1,5 +1,6 @@
 import Image from "next/image";
-
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
 const HomePage = () => {
   return (
     <div className="h-screen">

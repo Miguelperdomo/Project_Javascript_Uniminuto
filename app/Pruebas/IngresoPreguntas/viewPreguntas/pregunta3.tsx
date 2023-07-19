@@ -11,117 +11,88 @@ export function Pregunta3({ data }: Props) {
   const respuestas = data?.opciones
     .substring(0, data?.opciones.length - 1)
     .split("@");
+  const correctas = data?.respuesta.split("@");
+  console.log(correctas);
   return (
     <>
+      <div className="grid grid-cols-2 my-2">
+        <div>
+          <span className="font-bold" style={{ color: "black" }}>
+            Puntos asignados:{" "}
+          </span>
+          {data?.punto}
+        </div>
+        <div style={{ color: "black" }}>
+          <span className="font-bold">Estado de la pregunta: </span>
+          {(data?.aprobo == 0 && "Pendiente por autorización") ||
+            (data?.aprobo == 1 && "Rechazada") ||
+            "Aprobada"}
+        </div>
+      </div>
       <div className="my-2">
         <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
-          Texto:
+          Pregunta:
         </h1>
       </div>
       <div
         className="p-4"
+        style={{ color: "black" }}
         dangerouslySetInnerHTML={createMarkup(data?.Pregunta)}
       ></div>
       <div className="my-2">
         <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
-          Preguntas:
+          Respuestas:
         </h1>
       </div>
-      <div className="">
-        {data?.Preguntas &&
-          data?.Preguntas.map((preg: any, key: number) => {
-            let respuestas = preg?.opciones
-              .substring(0, preg?.opciones.length - 1)
-              .split("@");
+      <div
+        className="grid md:grid-cols-2 items-center gap-2"
+        style={{ color: "black" }}
+      >
+        {respuestas &&
+          respuestas.map((info: any, key: number) => {
+            const explode = info.split("~");
+
+            console.log("corre", correctas.indexOf(abecedario[key]));
             return (
-              <div key={key} className="grid md:grid-cols-2 items-center gap-2">
-                <div className="col-span-2 grid grid-cols-2 my-2">
-                  <div>
-                    <span className="font-bold">Puntos asignados: </span>
-                    {preg?.punto}
-                  </div>
-                  <div>
-                    <span className="font-bold">Estado de la pregunta: </span>
-                    {(preg?.aprobo == 0 && "Pendiente por autorización") ||
-                      (preg?.aprobo == 1 && "Rechazada") ||
-                      "Aprobada"}
-                  </div>
-                </div>
-                <div className="my-2">
-                  <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
-                    Pregunta {key + 1}:
-                  </h1>
-                </div>
-                <div className="my-2">
-                  <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
-                    Respuestas:
-                  </h1>
-                </div>
+              <>
                 <div
-                  className="p-4"
-                  dangerouslySetInnerHTML={createMarkup(preg?.Pregunta)}
-                ></div>
-                <div className="grid md:grid-cols-2 items-center gap-2">
-                  {respuestas &&
-                    respuestas.map((info: any, key: number) => {
-                      const explode = info.split("~");
+                  className={`${
+                    correctas.indexOf(abecedario[key]) >= 0 &&
+                    "border-2 border-green-800 p-2"
+                  }`}
+                >
+                  <span className="font-bold text-xl">
+                    {abecedario[key].toUpperCase()}){" "}
+                  </span>
+                  {explode[0] === "I" ? (
+                    <img
+                      src={`/${explode[1]}`} // Ruta relativa a la carpeta "public"
+                      alt={`${key}`}
+                      width={400}
+                      height={400}
+                      className="bg-cover"
+                    />
+                  ) : (
+                    <>{explode[1]?.length > 0 && <>{explode[1]}</>}</>
+                  )}
 
-                      return (
-                        <>
-                          <div
-                            className={`${
-                              preg.respuesta == abecedario[key] &&
-                              "border-2 border-green-800 p-2"
-                            }`}
-                          >
-                            <span className="font-bold text-xl">
-                              {abecedario[key].toUpperCase()}){" "}
-                            </span>
-                            {explode[0] === "I" ? (
-                              <img
-                                src={`/${explode[1]}`} // Ruta relativa a la carpeta "public"
-                                alt={`${key}`}
-                                width={400}
-                                height={400}
-                                className="bg-cover"
-                              />
-                            ) : (
-                              <>{explode[1]?.length > 0 && <>{explode[1]}</>}</>
-                            )}
-
-                            <span className="text-2xl">
-                              {preg.respuesta == abecedario[key] && (
-                                <>&#10004;</>
-                              )}
-                            </span>
-                          </div>
-                        </>
-                      );
-                    })}
+                  <span className="text-2xl">
+                    {correctas.indexOf(abecedario[key]) >= 0 && <>&#10004;</>}
+                  </span>
                 </div>
-                <div className="my-2 col-span-2">
-                  <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
-                    Retroalimentaciones:
-                  </h1>
-                </div>
-                <div className="col-span-2 grid md:grid-cols-2 items-center gap-2 mb-4">
-                  {preg?.retro.map((ret: any, key: number) => {
-                    return (
-                      <>
-                        <div>
-                          <span className="font-bold text-xl">
-                            {abecedario[key].toUpperCase()}){" "}
-                          </span>
-                          {ret?.texto}
-                        </div>
-                      </>
-                    );
-                  })}
-                </div>
-              </div>
+              </>
             );
           })}
       </div>
+      <div className="my-2">
+        <h1 className="font-bold p-2 rounded-md bg-blue-700 text-white text-center">
+          Retroalimentaciones:
+        </h1>
+      </div>
+      <div
+        className="grid md:grid-cols-2 items-center gap-2"
+        style={{ color: "black" }}
+      ></div>
     </>
   );
 }

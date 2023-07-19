@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       if (item.TipoPregunta == 3) {
         newData.push({
           ...item,
-          Preguntas: [],
+          preguntas: [],
         });
       } else {
         if (item.TipoPregunta != 100) {
